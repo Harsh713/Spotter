@@ -38,6 +38,13 @@ if not SECRET_KEY:
     SECRET_KEY = 'django-insecure-local-development-only'
 
 ALLOWED_HOSTS = env_list('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1')
+# Render provides the service's public hostname, so it needs no manual configuration there
+if os.environ.get('RENDER_EXTERNAL_HOSTNAME'):
+    ALLOWED_HOSTS.append(os.environ['RENDER_EXTERNAL_HOSTNAME'])
+
+# Behind a hosting provider's HTTPS proxy, trust its forwarded scheme
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 
 # Application definition
@@ -56,6 +63,8 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.gzip.GZipMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    # Serves the built frontend (see FRONTEND_DIST_DIR) from the same origin as the API
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -83,6 +92,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# The production build of the React frontend. When it exists, WhiteNoise serves it at the site
+# root, so the app and the API share one origin (no CORS needed). In Docker it is copied to
+# /app/frontend_dist; locally it is frontend/dist after `npm run build`.
+FRONTEND_DIST_DIR = Path(os.environ.get('FRONTEND_DIST_DIR', BASE_DIR.parent / 'frontend' / 'dist'))
+if FRONTEND_DIST_DIR.is_dir():
+    WHITENOISE_ROOT = FRONTEND_DIST_DIR
+    WHITENOISE_INDEX_FILE = True
 
 
 # In-process cache for weather forecasts (30 min TTL is set per entry)

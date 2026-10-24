@@ -22,6 +22,8 @@ CACHE_TTL_SECONDS = 30 * 60
 # Open-Meteo's free tier rate-limits bursts (HTTP 429); retry briefly before giving up on a batch
 RETRY_DELAYS_SECONDS = (1.5, 4.0)
 RETRYABLE_STATUS = {429, 500, 502, 503, 504}
+# Worst case per batch (3 attempts plus backoff) stays well under the server's 180 s request limit
+REQUEST_TIMEOUT_SECONDS = 12
 FORECAST_DAYS = 7
 # Open-Meteo reports large-scale rain (`rain`) and convective rain (`showers`) separately;
 # both count toward the rain risk rate.
@@ -100,7 +102,7 @@ def _fetch_batch(keys: List[GridKey]) -> Dict[GridKey, Dict[str, Any]]:
     for attempt, delay in enumerate((0.0,) + RETRY_DELAYS_SECONDS):
         time.sleep(delay)
         try:
-            resp = requests.get(OPEN_METEO_FORECAST_URL, params=params, headers={"User-Agent": USER_AGENT}, timeout=20)
+            resp = requests.get(OPEN_METEO_FORECAST_URL, params=params, headers={"User-Agent": USER_AGENT}, timeout=REQUEST_TIMEOUT_SECONDS)
             if resp.status_code in RETRYABLE_STATUS and attempt < len(RETRY_DELAYS_SECONDS):
                 continue
             resp.raise_for_status()

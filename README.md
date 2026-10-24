@@ -114,6 +114,8 @@ Open http://localhost:5173. The frontend calls `http://localhost:8000/api` unles
 
 **Docker** (alternative): `docker compose up --build` starts the backend on port 8000 and the frontend dev server on port 5173.
 
+**Production mode locally:** build the frontend with `VITE_API_BASE_URL=/api npm run build`. Django then serves it at http://localhost:8000/ from the same origin as the API.
+
 ## Configuration
 
 Production settings come from environment variables (see `backend/.env.example`).
@@ -125,7 +127,19 @@ Production settings come from environment variables (see `backend/.env.example`)
 | `DJANGO_ALLOWED_HOSTS` | Comma-separated backend hostnames | `localhost,127.0.0.1` |
 | `CORS_ALLOWED_ORIGINS` | Comma-separated frontend origins allowed to call the API | `http://localhost:5173,http://127.0.0.1:5173` |
 | `DJANGO_LOG_LEVEL` | Log level | `INFO` |
+| `FRONTEND_DIST_DIR` | Built frontend that Django serves at `/` (via WhiteNoise) | `frontend/dist`; `/app/frontend_dist` in Docker |
 | `VITE_API_BASE_URL` | Frontend build: base URL of the API | `http://localhost:8000/api` |
+
+## Deployment
+
+The app deploys as **one web service**. The Docker image builds the React frontend and Django serves it (via WhiteNoise) together with the API, so there is a single URL and no cross-origin setup.
+
+- `Dockerfile`: builds the frontend with `VITE_API_BASE_URL=/api`, then runs gunicorn with **one worker and 8 threads**. The route, weather and place caches live in process memory, so a single process lets every request share them. It listens on the platform's `$PORT`.
+- `render.yaml`: a Render Blueprint for the free plan. It sets `DJANGO_DEBUG=false`, generates `DJANGO_SECRET_KEY`, and uses `/api/health/` as the health check. Render's hostname is added to `ALLOWED_HOSTS` automatically through `RENDER_EXTERNAL_HOSTNAME`.
+
+To deploy on Render: **New > Blueprint**, select this repository, then **Apply**. Free instances sleep after about 15 minutes without traffic, so the first request after that takes 30-60 seconds while the service wakes up.
+
+Other platforms work the same way: build the `Dockerfile`, and set `DJANGO_DEBUG=false`, `DJANGO_SECRET_KEY` and `DJANGO_ALLOWED_HOSTS`.
 
 ## Tests
 

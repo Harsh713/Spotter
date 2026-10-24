@@ -1,0 +1,15 @@
+# Render Blueprint: one web service that serves both the API and the built frontend.
+# Deploy from the Render dashboard with New > Blueprint and this repository.
+services:
+  - type: web
+    name: weather-aware-truck-routing
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health/
+    autoDeploy: true
+    envVars:
+      - key: DJANGO_DEBUG
+        value: "false"
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
