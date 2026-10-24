@@ -1,0 +1,98 @@
+@import "leaflet/dist/leaflet.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #0c0d10;
+  color: #f1f5f9;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Card with hairline border */
+.card-chai {
+  background: rgba(18, 20, 26, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  border-radius: 0.5rem;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.card-chai:hover {
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+/* Custom minimal scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0c0d10;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Leaflet Map overrides for dark minimal look */
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  background-color: #0c0d10 !important;
+  font-family: inherit !important;
+}
+
+.leaflet-popup-content-wrapper {
+  background: rgba(18, 20, 26, 0.95) !important;
+  color: #f1f5f9 !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
+  padding: 0 !important;
+}
+
+.leaflet-popup-content {
+  margin: 0 !important;
+  line-height: 1.4 !important;
+}
+
+.leaflet-popup-tip {
+  background: #12141a !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+.route-tooltip.leaflet-tooltip {
+  background: rgba(18, 20, 26, 0.95);
+  color: #f1f5f9;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  padding: 8px 10px;
+}
+
+.route-tooltip.leaflet-tooltip-top::before {
+  border-top-color: rgba(18, 20, 26, 0.95);
+}
+
+.leaflet-control-zoom a {
+  background: rgba(18, 20, 26, 0.85) !important;
+  color: #f1f5f9 !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+.leaflet-control-zoom a:hover {
+  background: rgba(30, 34, 45, 0.95) !important;
+}
