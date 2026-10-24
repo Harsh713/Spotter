@@ -3,7 +3,7 @@
 A React + Django web app that helps a truck driver choose the safest route. It compares up to three road routes, samples the weather forecast at each checkpoint for the time the truck will actually be there, classifies risk with the assessment's weather and load-weight rules, and recommends the route that balances weather risk and travel time.
 
 - **Hosted app:** https://weather-aware-truck-routing-nu5q.onrender.com/
-- **Loom walkthrough:** _add link_
+- **Loom walkthrough:** https://www.loom.com/share/fc6db05a15bd450fbc3d24a47b058797
 
 ## Features
 
